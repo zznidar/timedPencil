@@ -2,12 +2,13 @@
 
 
 
+
 // board.setColor("hsl(100,100%,50%)")
 // Suppose around 10 minutes per page. In some cases with multiple examples, we can have also 20 minutes per page. 
 // Take 20 mintues drawing time to come around.
 
 // Timestamp is in milliseconds. 
-const rtt = 1000*60*1; // round-trip time 20 minutes
+const rtt = 1*60*1000; // round-trip time 20 minutes [ms]
 var timeDrawn = 0; // how much time we have spent drawing
 var lastDown;
 var lastUp; 
@@ -66,5 +67,7 @@ function prog(e) {
     //console.log(timeDrawn);
 }
 
+
+var defaultBoard = new DrawingBoard.Board('zbeubeu');
 
 timedPencil(defaultBoard);
