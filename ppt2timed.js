@@ -9,6 +9,15 @@ function fractionate(thisInk, target) {
     return(hslToHex(f * 300, 100, 50));
 }
 
+function* fractionateGenerator() {
+    let f = 0;
+    while(true) {
+        yield hslToHex(f, 100, 50);
+        f += 1;
+    }
+}
+
+
 // https://stackoverflow.com/a/44134328
 function hslToHex(h, s, l) {
     l /= 100;
@@ -82,12 +91,13 @@ async function loadPpt(file) {
     
 }
 
-
+var frGen = fractionateGenerator();
 async function changeInk(ink) {
     let xml = await ink.getData(new zip.TextWriter());
     let xmlDoc = parser.parseFromString(xml, "text/xml");
     let timestamp = xmlDoc.getElementsByTagName("inkml:timestamp")[0].getAttribute("timeString");
-    let newColour = fractionate(timestamp, timeDiff);
+    let newColour = frGen.next().value;
+    // let newColour = fractionate(timestamp, timeDiff);
     //console.log(ink.filename);
     xmlDoc.getElementsByTagName("inkml:brushProperty")?.[2]?.setAttribute("value", newColour);
     //console.log(newColour);
