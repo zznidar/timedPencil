@@ -46,6 +46,7 @@ loadPpt(filePicker.files[0])
 parser = new DOMParser();
 serialiser = new XMLSerializer();
 
+const NEKA_KONSTANTA = 20; // npr. delimo s številom slajdov, ker če 3 ure traja reševanje, so spremembe nezaznavne. Dobra vrednost je recimo 10.
 async function loadPpt(file) {
     entries = await getEntries(file, {});
     console.log(entries);
@@ -84,7 +85,7 @@ async function loadPpt(file) {
     firstInkTime = await firstInk.getData(new zip.TextWriter()).then(xml => parser.parseFromString(xml, "text/xml").getElementsByTagName("inkml:timestamp")[0].getAttribute("timeString"));
     lastInkTime = await lastInk.getData(new zip.TextWriter()).then(xml => parser.parseFromString(xml, "text/xml").getElementsByTagName("inkml:timestamp")[0].getAttribute("timeString"));
 
-    timeDiff = (new Date(lastInkTime) - new Date(firstInkTime)) || 1;
+    timeDiff = ((new Date(lastInkTime) - new Date(firstInkTime)) || 1) / NEKA_KONSTANTA;
 
     changeInks(inks, everythingElse) 
         .then(downloadFile);
@@ -96,8 +97,8 @@ async function changeInk(ink) {
     let xml = await ink.getData(new zip.TextWriter());
     let xmlDoc = parser.parseFromString(xml, "text/xml");
     let timestamp = xmlDoc.getElementsByTagName("inkml:timestamp")[0].getAttribute("timeString");
-    let newColour = frGen.next().value;
-    // let newColour = fractionate(timestamp, timeDiff);
+    //let newColour = frGen.next().value;
+     let newColour = fractionate(timestamp, timeDiff);
     //console.log(ink.filename);
     xmlDoc.getElementsByTagName("inkml:brushProperty")?.[2]?.setAttribute("value", newColour);
     //console.log(newColour);
